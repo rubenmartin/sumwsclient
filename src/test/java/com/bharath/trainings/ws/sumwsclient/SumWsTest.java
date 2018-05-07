@@ -31,32 +31,35 @@ public class SumWsTest {
 			// Security
 			Client client = ClientProxy.getClient(port);
 			Endpoint endpoint = client.getEndpoint();
-
 			HashMap<String, Object> outProps = new HashMap<>();
-
-			outProps.put(WSHandlerConstants.ACTION, "UsernameToken Encrypt");
+			outProps.put(WSHandlerConstants.ACTION, "UsernameToken Encrypt Signature");
 			outProps.put(WSHandlerConstants.USER, "sumuser");
 			outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
 			outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordCallbackHandler.class.getName());
 
 			outProps.put(WSHandlerConstants.ENCRYPTION_USER, "myservicekey");
-			outProps.put(WSHandlerConstants.ENC_PROP_FILE, "etc/clientKeyStore.properties");
+			outProps.put(WSHandlerConstants.ENC_PROP_FILE, "etc/clientKeystore.properties");
+
+			outProps.put(WSHandlerConstants.SIGNATURE_USER, "myclientkey");
+			outProps.put(WSHandlerConstants.SIG_PROP_FILE, "etc/clientKeystore.properties");
 
 			WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
 			endpoint.getOutInterceptors().add(wssOut);
 
 			// Decription of the data from client
+
 			HashMap<String, Object> inProps = new HashMap<>();
 
-			inProps.put(WSHandlerConstants.ACTION, "Encrypt");
-			inProps.put(WSHandlerConstants.DEC_PROP_FILE, "etc/clientKeyStore.properties");
+			inProps.put(WSHandlerConstants.ACTION, "Encrypt Signature");
+			inProps.put(WSHandlerConstants.DEC_PROP_FILE, "etc/clientKeystore.properties");
+			
 			inProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, PasswordCallbackHandler.class.getName());
-
+			inProps.put(WSHandlerConstants.SIG_PROP_FILE, "etc/clientKeystore.properties");
+			
 			WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
 			endpoint.getInInterceptors().add(wssIn);
 
 			// End Sec
-
 			SumRequest request = new SumRequest();
 			request.setNum1(10);
 			request.setNum2(20);
